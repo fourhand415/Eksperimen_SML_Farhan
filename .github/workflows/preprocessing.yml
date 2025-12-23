@@ -1,0 +1,35 @@
+name: Automated Preprocessing
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  preprocessing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.7"
+
+      - name: Install dependencies
+        run: |
+          pip install pandas scikit-learn
+
+      - name: Run preprocessing script
+        run: |
+          python preprocessing/automate_Farhan.py
+
+      - name: Commit preprocessing result
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add preprocessing/heart_disease_preprocessing.csv
+          git commit -m "Automated preprocessing result" || echo "No changes to commit"
+          git push
